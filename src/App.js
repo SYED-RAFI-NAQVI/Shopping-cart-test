@@ -1,24 +1,65 @@
-import logo from './logo.svg';
-import './App.css';
+import Login from "./components/Login";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+} from "react-router-dom";
+import Home from "./components/Home";
+import { Grid } from "@mui/material";
+import Navbar from "./components/Navbar";
+import Profile from "./components/Profile";
+import CodeChallenge from "./components/CodeChallenge";
+import AllProducts from "./components/AllProducts";
+import Cart from "./components/Cart";
+
+function PrivateRoute({ children, ...rest }) {
+  return (
+    <Route
+      {...rest}
+      render={({ location }) =>
+        localStorage.getItem("token") ? (
+          children
+        ) : (
+          <Redirect
+            to={{
+              pathname: "/",
+              state: { from: location },
+            }}
+          />
+        )
+      }
+    />
+  );
+}
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Switch>
+        <Route exact path="/">
+          <Login />
+        </Route>
+        <Grid>
+          <Navbar />
+          <PrivateRoute path="/home">
+            <Home />
+          </PrivateRoute>
+          <PrivateRoute path="/all-products">
+            <AllProducts />
+          </PrivateRoute>
+          <PrivateRoute path="/profile">
+            <Profile />
+          </PrivateRoute>
+          <PrivateRoute path="/code-challenge">
+            <CodeChallenge />
+          </PrivateRoute>
+          <PrivateRoute path="/cart">
+            <Cart />
+          </PrivateRoute>
+        </Grid>
+      </Switch>
+    </Router>
   );
 }
 
